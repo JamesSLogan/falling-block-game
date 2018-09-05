@@ -2,7 +2,7 @@
 from Settings import *
 
 def startLevel():
-    return 6
+    return 1
 
 def updateLevel(level):
     return lines(level), nppp(level), gravity(level)
