@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 #
 # firefox /usr/lib64/python3.4/site-packages/pygame/docs/ref/key.html
+import os
 import sys
 import time
 import datetime
 import random
+
+# tested on windows: keeps window from spawning slightly off screen
+os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (10,10)
+os.environ['SDL_VIDEO_CENTERED'] = '0'
 
 import pygame
 from pygame.locals import *
@@ -487,7 +492,7 @@ def main():
             keys = pygame.key.get_pressed()
             for key in hard_drop_key, left_key, right_key:
                 if keys[key]:
-                    if last_movement > 100 or das_triggered:
+                    if last_movement > 150 or das_triggered:
                         das_triggered = True
                         events.append(pygame.event.Event(KEYDOWN, {'key': key}))
 
