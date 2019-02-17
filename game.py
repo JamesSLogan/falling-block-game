@@ -24,6 +24,7 @@ from PieceManager import PieceManager
 from Sheet        import Sheet
 from Text         import Text
 from Background   import Background
+from Animation    import Animation
 from Settings     import *
 
 ###############################################################################
@@ -51,6 +52,10 @@ well_sheets  = []                                                  # see below
 
 # List of all Piece objects. Stored piece does not count (see 'hold()')
 pieces = []
+
+# List of all Animation objects. There's only going to be one at a time
+# currently.
+animations = []
 
 falling_piece = None
 shadow_piece  = None
@@ -266,7 +271,6 @@ def topAndDrop(piece):
     if groupcollide(piece.getSprites(), piece_sprites):
         piece.move(cheat_key) # have to move up 1 in this case
 
-
 #
 # Shadows need their own special movement for a few different reasons:
 # 1. They need to be moved up and down on many left/right movements.
@@ -321,6 +325,10 @@ def updateText(text, msg):
 # asdf
 def updateScreen():
     screen.blit(background.surf, (0,0))
+
+    for animation in animations:
+        if not animation.update(screen):
+            animations.remove(animation)
 
     # Falling piece can collide with its shadow so let's print the shadow first
     # so that it gets overwritten by the piece.
@@ -447,12 +455,24 @@ def main():
 
     saved_piece = None
 
+    last_line_animation = lines
+
+    # Draw countdown
+    for i in range(countdown_secs, 0, -1):
+        animations.append(Animation(i, clock, screen))
+        while animations:
+            clock.tick(fps)
+            updateScreen()
+
+    # Flush input buffer - applicable if countdown happened
+    pygame.event.get()
+
     #
     # MAIN LOOP
     #
     while running:
 
-        clock.tick(60)
+        clock.tick(fps)
         total_elapsed += clock.get_time()
 
         if display_time:
@@ -470,7 +490,11 @@ def main():
 
         reverted_downward_move = False
 
-        new_piece_pending_period = Level.nppp(level)
+        # See explanation in Settings.py, under MISC.
+        if level_enabled:
+            new_piece_pending_period = Level.nppp(level)
+        else:
+            new_piece_pending_period = hard_drop_wait
 
         if new_piece_pending:
             new_piece_pending_elapsed += clock.get_time()
@@ -678,6 +702,12 @@ def main():
                         updateText(lines_surf, 0)
                         print(timeObj(0, total_elapsed)[1])
                         gameOver()
+
+            # Handle animations
+            if display_lines and not level_enabled:
+                if lines <= 10 and lines != last_line_animation:
+                    last_line_animation = lines
+                    animations.append(Animation(lines, clock, screen))
 
             if display_points:
                 points += Scoring.line_points(rows_completed)

@@ -281,7 +281,7 @@ class Piece(object):
     @staticmethod
     def getMiddleOffset(coords):
         maxX = max(coords, key=lambda a:a[0])[0]
-        return 5 - int((maxX+1)/2)
+        return int(well_width/2) - int((maxX+1)/2)
 
     # Compute the offset that a piece needs to be centered in the upcoming
     # pieces box. Since there are multiple pieces in the box we get passed

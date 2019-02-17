@@ -22,10 +22,10 @@ quit_keys = [K_ESCAPE, K_q]
 #mode = '2min'
 time_limit = 120
 
-#mode = '40lines'
-start_lines = 40
+mode = 'lines'
+start_lines = 100
 
-mode = 'infinite'
+#mode = 'infinite'
 
 display_level  = False
 display_time   = False
@@ -38,7 +38,7 @@ if mode == '2min':
     display_time   = True
     display_points = True
 
-elif mode == '40lines':
+elif mode == 'lines':
     display_time   = True
     display_lines  = True
     time_counts_up = True
@@ -125,6 +125,7 @@ black = (0,0,0)
 white = (255,255,255)
 shadow_color = (200,200,200)
 font_color = (0,255,0)
+animation_color = (255,0,0)
 background_color = black
 grid_color = 'green'
 piece_grid_color = 'black'
@@ -137,4 +138,14 @@ piece_grid_color = 'black'
 #                                    MISC                                     #
 ###############################################################################
 
-bag_size = 7 # for PieceManager rng
+bag_size = 7 # piece manager unused rng
+
+countdown_secs = 3 # 0 to disable
+
+fps = 60 # I have not tried messing with this
+
+# There are 2 hard drops. One will spawn a piece within the next frame, the
+# other will wait so that you can move the piece for a certain amount of time.
+# In infinite mode that time period is set, but otherwise you can set it to
+# the milliseconds below.
+hard_drop_wait = 300
